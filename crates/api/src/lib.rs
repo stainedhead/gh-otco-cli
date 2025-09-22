@@ -1,7 +1,8 @@
-use reqwest::header::{HeaderMap, HeaderValue, ACCEPT, AUTHORIZATION, USER_AGENT};
+use reqwest::header::{HeaderMap, HeaderValue, HeaderName, ACCEPT, AUTHORIZATION, USER_AGENT};
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 use url::Url;
+use std::time::Duration;
 
 #[derive(Debug, Error)]
 pub enum ApiError {
@@ -23,7 +24,9 @@ impl GitHubClient {
         let base = base_url
             .unwrap_or_else(|| "https://api.github.com".to_string());
         let base_url = Url::parse(&base)?;
-        let client = reqwest::Client::builder().build()?;
+        let client = reqwest::Client::builder()
+            .timeout(Duration::from_secs(30))
+            .build()?;
         Ok(Self { base_url, client, token })
     }
 
@@ -31,6 +34,10 @@ impl GitHubClient {
         let mut headers = HeaderMap::new();
         headers.insert(USER_AGENT, HeaderValue::from_static("gh-otco-cli"));
         headers.insert(ACCEPT, HeaderValue::from_static("application/vnd.github+json"));
+        headers.insert(
+            HeaderName::from_static("x-github-api-version"),
+            HeaderValue::from_static("2022-11-28"),
+        );
         if let Some(t) = &self.token {
             let value = format!("Bearer {}", t);
             if let Ok(val) = HeaderValue::from_str(&value) {

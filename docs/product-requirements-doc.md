@@ -7,6 +7,12 @@
 - Success metrics: Time-to-answer for queries (<3s for common ops), coverage of core REST resources (org/repo/issues/PRs/actions/security), export versatility (JSON/YAML/CSV/PSV/table), adoption and CI usage.
 - Non-goals: Git operations; replicating all `gh` features; UI/desktop app.
 
+## Repository Structure
+- `crates/api`: Reusable GitHub REST client for HTTP access, pagination, and models.
+- `crates/cli`: CLI binary that parses commands, resolves config/auth, and formats output.
+- `docs/`: PRD and technical design docs; kept up to date with features.
+- `.github/workflows/`: CI for build, lint, test, and coverage.
+
 ## Overview
 - Problem statement: Developers need fast, scriptable introspection of GitHub orgs/repos/issues/PRs/actions/security with consistent output for analysis and automation.
 - Context: CLI-first; API logic must be reusable as a crate for future tools/services. Must support macOS, Linux, Windows.
@@ -24,7 +30,9 @@
 - Config/credentials: File → env → CLI override order (CLI has highest precedence). Config file searched in `./gh-otco.{toml|yaml|json}` then `~/.gh-otco.{toml|yaml|json}`.
 - Auth: PAT via OS keychain using `keyring`. Optional OAuth2 device flow using `oauth2` crate; `login` stores token securely; `logout` removes it.
 - Output: `--output json|yaml|csv|psv|table`; field selection via `--fields`; stable schemas via `serde` models. CSV/PSV via `csv` crate; table via `comfy-table`.
+ - Output file: `--output-file <path>` writes results to a file instead of stdout.
 - Observability: `tracing` + `tracing-subscriber` with OpenTelemetry (`tracing-opentelemetry`, `opentelemetry-otlp`). Configurable `--log-level` and OTEL envs. OTEL exporter behind an optional feature (`--features otel`).
+ - Shutdown: flush tracer provider on exit to ensure spans are delivered.
 - Errors: `thiserror` for domain errors; `anyhow` at CLI boundary with rich context; retry/backoff for 5xx/secondary rate limits.
 - Portability: Use `dirs`/`home` for paths; no Unix-only features. Tested on macOS/Linux/Windows.
 
@@ -67,6 +75,7 @@
 
 - Formatting & Export
   - `--output` formats: json, yaml, csv, psv, table; `--fields` selection; `--sort`/`--limit` controls; `--all` to page through; `--file` to write output.
+  - `--output-file` writes output to a specific path.
 
 - Reliability
   - Pagination handling, backoff on `403` secondary rate limits, partial-failure reporting with structured errors.
@@ -78,3 +87,5 @@ Open questions
 
 References
 - Product docs live in `docs/`. PRD: `docs/product-requirements-doc.md`. Technical design: `docs/technical-design-doc.md` (kept current with implementation details).
+- API headers & timeouts
+-  - Include `Accept: application/vnd.github+json`, `User-Agent: gh-otco-cli`, and `X-GitHub-Api-Version: 2022-11-28` on requests; HTTP client timeout ~30s.

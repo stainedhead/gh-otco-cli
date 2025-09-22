@@ -20,6 +20,7 @@ A cross-platform Rust CLI to explore and research GitHub data via the REST API. 
 - Security (Dependabot): `cargo run -- security dependabot my-org/my-repo --severity high,critical --output json`
 
 Global output controls: `--output json|yaml|csv|psv|table`, `--fields a,b,c`, `--sort field|-field`, `--limit N`, `--all` (page-through).
+Write to file: append `--output-file out.json` (applies to all formats).
 
 ## Configuration & Auth
 - Precedence: config file < env < CLI.
@@ -28,6 +29,7 @@ Global output controls: `--output json|yaml|csv|psv|table`, `--fields a,b,c`, `-
   - CLI: `--api-url`, `--output`, etc.
 - Manage config: `cargo run -- config init`, `config get <key>`, `config set <key> <value>`.
 - Credentials: PAT stored securely via OS keychain (`keyring`). OAuth device flow planned.
+  - Write output to file: `--output-file <path>` instead of stdout.
 
 ## Project Layout
 - Workspace crates:
@@ -35,11 +37,32 @@ Global output controls: `--output json|yaml|csv|psv|table`, `--fields a,b,c`, `-
   - `crates/cli` (`gh-otco-cli`): CLI, config, auth, output
 - Docs: see `AGENTS.md`, `docs/product-requirements-doc.md`, and `docs/technical-design-doc.md`.
 
+## Directory Map
+- `/crates/api`: Library crate for GitHub REST access, models, pagination helpers.
+- `/crates/cli`: Binary crate for command parsing, config/auth, formatting, and I/O.
+- `/docs`: Product and technical documentation (PRD, design docs).
+- `/.github/workflows`: CI workflows (build, lint, test, coverage upload).
+- `/Cargo.toml`: Workspace manifest and members.
+- `/README.md`: Top-level usage, layout, and contribution pointers.
+- `/AGENTS.md`: Repository contribution and team guidelines.
+
+## Core Dependencies
+- `clap`: Defines CLI commands, flags, and help text.
+- `reqwest`: HTTP client (TLS via rustls) for GitHub REST.
+- `serde`/`serde_json`/`serde_yaml`: Data models and serialization.
+- `tokio`: Async runtime for HTTP and I/O.
+- `tracing` + `tracing-subscriber`: Structured logging with env-based filtering.
+- `tracing-opentelemetry` + `opentelemetry-otlp` (feature `otel`): OTEL export.
+- `keyring`: Securely stores PAT/OAuth tokens per-OS (Keychain/Credential Manager/etc.).
+- `csv` and `comfy-table`: CSV/PSV export and table rendering.
+- `anyhow`/`thiserror`: Error handling at CLI boundary and domain types.
+
 ## Development
 - Format: `cargo fmt --all`
 - Lint: `cargo clippy --workspace --all-targets -- -D warnings`
 - Test: `cargo test --workspace`
 - Optional OTEL: build with `--features otel` and set `OTEL_EXPORTER_OTLP_ENDPOINT`.
+  - Tracer shutdown flushes at exit to ensure spans are exported.
 
 ## Platform Support
 macOS, Linux, and Windows. Paths and credential storage use cross-platform crates.

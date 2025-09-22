@@ -7,6 +7,25 @@ The documentation for this project lives in the `docs/` directory.
 - `docs/technical-design-doc.md`: Technical design details for developers, architects, and SREs. Keep this current as the system evolves.
 - `README.md`: First entry point for new contributors and product stakeholders. Keep usage, setup, and contribution details current.
 
+## Repository Layout
+- `crates/api` (`gh-otco-api`): Reusable GitHub REST client for HTTP, headers, pagination helpers, and minimal models.
+- `crates/cli` (`gh-otco-cli`): CLI commands (clap), config/env precedence, secure token storage, formatting, and observability.
+- `docs/`: Product (PRD) and technical design documentation.
+- `.github/workflows/`: CI for build, lint, test, and coverage reports.
+- `Cargo.toml`: Workspace manifest and members.
+- `README.md` / `AGENTS.md`: Usage, contribution, and guidelines.
+
+## Core Crates
+- `clap`: Command definitions, parsing, help UX.
+- `reqwest` (+ `rustls`): HTTP client for GitHub REST.
+- `serde` (`serde_json`, `serde_yaml`): Models and serialization.
+- `tokio`: Async runtime for HTTP/I/O.
+- `tracing`, `tracing-subscriber`: Structured logs and filtering.
+- `tracing-opentelemetry`, `opentelemetry-otlp` (feature `otel`): OTEL export.
+- `keyring`: OS-native secure token storage.
+- `csv`, `comfy-table`: Delimited and tabular output.
+- `anyhow`, `thiserror`: Ergonomic and domain error handling.
+
 ## Project Structure & Module Organization
 - `src/`: Main library and CLI entry (`main.rs`).
 - `src/bin/`: Additional binaries (e.g., `src/bin/otco.rs`).

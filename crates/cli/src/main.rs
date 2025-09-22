@@ -5,7 +5,7 @@ use gh_otco_api::GitHubClient;
 use home::home_dir;
 use keyring::Entry;
 use serde::{Deserialize, Serialize};
-use std::{collections::BTreeMap, fs, path::PathBuf};
+use std::{collections::BTreeMap, fs, path::{Path, PathBuf}};
 use tracing::warn;
 use tracing_subscriber::{fmt, EnvFilter};
 #[cfg(feature = "otel")]
@@ -94,6 +94,10 @@ struct Cli {
     /// Limit number of rows in array outputs
     #[arg(long, global = true)]
     limit: Option<usize>,
+
+    /// Write output to a file instead of stdout
+    #[arg(long, global = true)]
+    output_file: Option<PathBuf>,
 
     #[command(subcommand)]
     command: Commands,
@@ -513,7 +517,7 @@ async fn main() -> Result<()> {
             AuthCmd::Whoami => {
                 let client = GitHubClient::new(Some(cfg.api_url.clone()), cfg.token.clone())?;
                 match client.current_user().await {
-                    Ok(user) => output_any(&user, cfg.output)?,
+                    Ok(user) => output_any(&user, cfg.output, cli.output_file.as_deref())?,
                     Err(e) => {
                         warn!(error = %e, "failed to fetch user");
                         return Err(e.into());
@@ -525,7 +529,7 @@ async fn main() -> Result<()> {
             MetaCmd::RateLimit => {
                 let client = GitHubClient::new(Some(cfg.api_url.clone()), cfg.token.clone())?;
                 match client.rate_limit().await {
-                    Ok(rl) => output_any(&rl, cfg.output)?,
+                    Ok(rl) => output_any(&rl, cfg.output, cli.output_file.as_deref())?,
                     Err(e) => {
                         warn!(error = %e, "failed to fetch rate limit");
                         return Err(e.into());
@@ -539,7 +543,7 @@ async fn main() -> Result<()> {
                 let repos = client
                     .list_org_repos(&org, r#type.as_deref(), per_page, if cli.all { Some(u32::MAX) } else { Some(pages) })
                     .await?;
-                output_array_with_projection(&repos, cfg.output, cli.fields.as_deref(), cli.sort.as_deref(), cli.limit)?;
+                output_array_with_projection(&repos, cfg.output, cli.fields.as_deref(), cli.sort.as_deref(), cli.limit, cli.output_file.as_deref())?;
             }
         },
         Commands::Repo { cmd } => match cmd {
@@ -548,7 +552,7 @@ async fn main() -> Result<()> {
                 let repos = client
                     .list_org_repos(&org, r#type.as_deref(), per_page, if cli.all { Some(u32::MAX) } else { Some(pages) })
                     .await?;
-                output_array_with_projection(&repos, cfg.output, cli.fields.as_deref(), cli.sort.as_deref(), cli.limit)?;
+                output_array_with_projection(&repos, cfg.output, cli.fields.as_deref(), cli.sort.as_deref(), cli.limit, cli.output_file.as_deref())?;
             }
         },
         Commands::Issues { cmd } => match cmd {
@@ -558,7 +562,7 @@ async fn main() -> Result<()> {
                 let issues = client
                     .list_repo_issues(&owner, &name, state.as_deref(), labels.as_deref(), assignee.as_deref(), milestone.as_deref(), since.as_deref(), per_page, if cli.all { Some(u32::MAX) } else { Some(pages) })
                     .await?;
-                output_array_with_projection(&issues, cfg.output, cli.fields.as_deref(), cli.sort.as_deref(), cli.limit)?;
+                output_array_with_projection(&issues, cfg.output, cli.fields.as_deref(), cli.sort.as_deref(), cli.limit, cli.output_file.as_deref())?;
             }
         },
         Commands::Prs { cmd } => match cmd {
@@ -568,7 +572,7 @@ async fn main() -> Result<()> {
                 let prs = client
                     .list_repo_pulls(&owner, &name, state.as_deref(), draft, base.as_deref(), per_page, if cli.all { Some(u32::MAX) } else { Some(pages) })
                     .await?;
-                output_array_with_projection(&prs, cfg.output, cli.fields.as_deref(), cli.sort.as_deref(), cli.limit)?;
+                output_array_with_projection(&prs, cfg.output, cli.fields.as_deref(), cli.sort.as_deref(), cli.limit, cli.output_file.as_deref())?;
             }
         },
         Commands::Actions { cmd } => match cmd {
@@ -576,7 +580,7 @@ async fn main() -> Result<()> {
                 let (owner, name) = split_repo(&repo)?;
                 let client = GitHubClient::new(Some(cfg.api_url.clone()), cfg.token.clone())?;
                 let workflows = client.list_repo_workflows(&owner, &name).await?;
-                output_any(&workflows, cfg.output)?;
+                output_any(&workflows, cfg.output, cli.output_file.as_deref())?;
             }
             ActionsCmd::Runs { repo, branch, status, conclusion, per_page, pages } => {
                 let (owner, name) = split_repo(&repo)?;
@@ -584,7 +588,7 @@ async fn main() -> Result<()> {
                 let runs = client
                     .list_repo_workflow_runs(&owner, &name, branch.as_deref(), status.as_deref(), conclusion.as_deref(), per_page, if cli.all { Some(u32::MAX) } else { Some(pages) })
                     .await?;
-                output_array_with_projection(&runs, cfg.output, cli.fields.as_deref(), cli.sort.as_deref(), cli.limit)?;
+                output_array_with_projection(&runs, cfg.output, cli.fields.as_deref(), cli.sort.as_deref(), cli.limit, cli.output_file.as_deref())?;
             }
         },
         Commands::Security { cmd } => match cmd {
@@ -594,7 +598,7 @@ async fn main() -> Result<()> {
                 let alerts = client
                     .list_dependabot_alerts(&owner, &name, state.as_deref(), severity.as_deref(), per_page, if cli.all { Some(u32::MAX) } else { Some(pages) })
                     .await?;
-                output_array_with_projection(&alerts, cfg.output, cli.fields.as_deref(), cli.sort.as_deref(), cli.limit)?;
+                output_array_with_projection(&alerts, cfg.output, cli.fields.as_deref(), cli.sort.as_deref(), cli.limit, cli.output_file.as_deref())?;
             }
             SecurityCmd::CodeScanning { repo, state, severity, per_page, pages } => {
                 let (owner, name) = split_repo(&repo)?;
@@ -602,7 +606,7 @@ async fn main() -> Result<()> {
                 let alerts = client
                     .list_codescanning_alerts(&owner, &name, state.as_deref(), severity.as_deref(), per_page, if cli.all { Some(u32::MAX) } else { Some(pages) })
                     .await?;
-                output_array_with_projection(&alerts, cfg.output, cli.fields.as_deref(), cli.sort.as_deref(), cli.limit)?;
+                output_array_with_projection(&alerts, cfg.output, cli.fields.as_deref(), cli.sort.as_deref(), cli.limit, cli.output_file.as_deref())?;
             }
             SecurityCmd::SecretScanning { repo, state, secret_type, per_page, pages } => {
                 let (owner, name) = split_repo(&repo)?;
@@ -610,7 +614,7 @@ async fn main() -> Result<()> {
                 let alerts = client
                     .list_secret_scanning_alerts(&owner, &name, state.as_deref(), secret_type.as_deref(), per_page, if cli.all { Some(u32::MAX) } else { Some(pages) })
                     .await?;
-                output_array_with_projection(&alerts, cfg.output, cli.fields.as_deref(), cli.sort.as_deref(), cli.limit)?;
+                output_array_with_projection(&alerts, cfg.output, cli.fields.as_deref(), cli.sort.as_deref(), cli.limit, cli.output_file.as_deref())?;
             }
         },
         Commands::Config { cmd } => match cmd {
@@ -649,9 +653,7 @@ async fn main() -> Result<()> {
             }
             DocsCmd::Readme => {
                 let md = generate_markdown_from_clap();
-                let root = std::env::var("CARGO_MANIFEST_DIR").map(PathBuf::from).unwrap();
-                let repo_root = root.parent().and_then(|p| p.parent()).unwrap_or(&root);
-                let readme_path = repo_root.join("README.md");
+                let readme_path = find_readme().unwrap_or_else(|| PathBuf::from("README.md"));
                 let content = fs::read_to_string(&readme_path)?;
                 let begin = "<!-- AUTO-GENERATED: COMMANDS BEGIN -->";
                 let end = "<!-- AUTO-GENERATED: COMMANDS END -->";
@@ -668,6 +670,11 @@ async fn main() -> Result<()> {
         },
     }
 
+    #[cfg(feature = "otel")]
+    {
+        // flush traces if enabled
+        opentelemetry::global::shutdown_tracer_provider();
+    }
     Ok(())
 }
 
@@ -699,22 +706,29 @@ fn output_one(map: &BTreeMap<&str, String>, fmt: OutputFormat) -> Result<()> {
     Ok(())
 }
 
-fn output_any<T: Serialize>(value: &T, fmt: OutputFormat) -> Result<()> {
+fn output_any<T: Serialize>(value: &T, fmt: OutputFormat, out_path: Option<&Path>) -> Result<()> {
     match fmt {
-        OutputFormat::Json => println!("{}", serde_json::to_string_pretty(value)?),
-        OutputFormat::Yaml => println!("{}", serde_yaml::to_string(value)?),
+        OutputFormat::Json => {
+            let s = serde_json::to_string_pretty(value)?;
+            write_out(&s, out_path)?;
+        }
+        OutputFormat::Yaml => {
+            let s = serde_yaml::to_string(value)?;
+            write_out(&s, out_path)?;
+        }
         OutputFormat::Csv | OutputFormat::Psv | OutputFormat::Table => {
             // Try to render arrays of objects; fallback to JSON
             let v = serde_json::to_value(value)?;
             if let Some(arr) = v.as_array() {
                 let rows = normalize_records(arr);
                 match fmt {
-                    OutputFormat::Table => print_table(&rows),
-                    OutputFormat::Csv | OutputFormat::Psv => write_delimited(&rows, fmt)?,
+                    OutputFormat::Table => write_out(&table_to_string(&rows), out_path)?,
+                    OutputFormat::Csv | OutputFormat::Psv => write_out(&delimited_to_string(&rows, fmt)?, out_path)?,
                     _ => unreachable!(),
                 }
             } else {
-                println!("{}", serde_json::to_string_pretty(&v)?);
+                let s = serde_json::to_string_pretty(&v)?;
+                write_out(&s, out_path)?;
             }
         }
     }
@@ -727,6 +741,7 @@ fn output_array_with_projection(
     fields: Option<&str>,
     sort: Option<&str>,
     limit: Option<usize>,
+    out_path: Option<&Path>,
 ) -> Result<()> {
     let mut rows = normalize_records(arr);
     if let Some(fcsv) = fields {
@@ -747,10 +762,10 @@ fn output_array_with_projection(
     }
     if let Some(l) = limit { if rows.len() > l { rows.truncate(l); } }
     match fmt {
-        OutputFormat::Json => println!("{}", serde_json::to_string_pretty(&rows)?),
-        OutputFormat::Yaml => println!("{}", serde_yaml::to_string(&rows)?),
-        OutputFormat::Csv | OutputFormat::Psv => write_delimited(&rows, fmt)?,
-        OutputFormat::Table => print_table(&rows),
+        OutputFormat::Json => write_out(&serde_json::to_string_pretty(&rows)?, out_path)?,
+        OutputFormat::Yaml => write_out(&serde_yaml::to_string(&rows)?, out_path)?,
+        OutputFormat::Csv | OutputFormat::Psv => write_out(&delimited_to_string(&rows, fmt)?, out_path)?,
+        OutputFormat::Table => write_out(&table_to_string(&rows), out_path)?,
     }
     Ok(())
 }
@@ -770,13 +785,7 @@ fn normalize_records(arr: &[serde_json::Value]) -> Vec<BTreeMap<String, String>>
             let mut row = BTreeMap::new();
             let obj = item.as_object().cloned().unwrap_or_default();
             for k in &header {
-                let s = obj
-                    .get(k)
-                    .map(|v| match v {
-                        serde_json::Value::Null => "".to_string(),
-                        _ => v.to_string(),
-                    })
-                    .unwrap_or_default();
+                let s = obj.get(k).map(render_value).unwrap_or_default();
                 row.insert(k.clone(), s);
             }
             row
@@ -823,6 +832,68 @@ fn split_repo(s: &str) -> Result<(String, String)> {
         anyhow::bail!("expected <owner>/<repo>, got '{s}'");
     }
     Ok((owner.to_string(), name.to_string()))
+}
+
+fn render_value(v: &serde_json::Value) -> String {
+    match v {
+        serde_json::Value::Null => String::new(),
+        serde_json::Value::Bool(b) => b.to_string(),
+        serde_json::Value::Number(n) => n.to_string(),
+        serde_json::Value::String(s) => s.clone(),
+        _ => v.to_string(),
+    }
+}
+
+fn write_out(s: &str, out_path: Option<&Path>) -> Result<()> {
+    if let Some(p) = out_path { fs::write(p, s)?; } else { println!("{}", s); }
+    Ok(())
+}
+
+fn delimited_to_string(rows: &[BTreeMap<String, String>], fmt: OutputFormat) -> Result<String> {
+    let headers: Vec<String> = rows
+        .get(0)
+        .map(|r| r.keys().cloned().collect())
+        .unwrap_or_default();
+    let mut buf: Vec<u8> = Vec::new();
+    let mut wtr = csv::WriterBuilder::new()
+        .delimiter(match fmt { OutputFormat::Csv => b',', _ => b'|' })
+        .from_writer(&mut buf);
+    if !headers.is_empty() {
+        wtr.write_record(headers.clone())?;
+    }
+    for row in rows {
+        let record: Vec<String> = headers.iter().map(|h| row.get(h).cloned().unwrap_or_default()).collect();
+        wtr.write_record(record)?;
+    }
+    wtr.flush()?;
+    drop(wtr);
+    Ok(String::from_utf8_lossy(&buf).to_string())
+}
+
+fn table_to_string(rows: &[BTreeMap<String, String>]) -> String {
+    let mut table = Table::new();
+    table.load_preset(UTF8_FULL);
+    if let Some(first) = rows.first() {
+        table.set_header(first.keys().cloned().collect::<Vec<_>>());
+    }
+    for row in rows {
+        table.add_row(row.values().cloned().collect::<Vec<_>>());
+    }
+    format!("{}", table)
+}
+
+fn find_readme() -> Option<PathBuf> {
+    if let Ok(ws) = std::env::var("CARGO_WORKSPACE_ROOT") {
+        let p = PathBuf::from(ws).join("README.md");
+        if p.exists() { return Some(p); }
+    }
+    let mut cur = PathBuf::from(std::env::var("CARGO_MANIFEST_DIR").ok()?);
+    for _ in 0..5 {
+        let candidate = cur.join("README.md");
+        if candidate.exists() { return Some(candidate); }
+        if !cur.pop() { break; }
+    }
+    None
 }
 
 fn infer_format(path: &PathBuf) -> String {

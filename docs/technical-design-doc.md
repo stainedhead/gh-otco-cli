@@ -1,5 +1,13 @@
 # Technical Design Document
 
+## Repository Layout
+- `crates/api` (`gh-otco-api`): Reusable GitHub REST client. Handles HTTP, headers, pagination helpers, and minimal models.
+- `crates/cli` (`gh-otco-cli`): CLI layer with `clap`, config/env/CLI precedence, secure token storage, output formatting, and observability.
+- `docs/`: Product docs (PRD) and technical design docs.
+- `.github/workflows/`: CI pipelines (build, lint, test, coverage).
+- `Cargo.toml`: Workspace manifest defining members and resolver.
+- `README.md` / `AGENTS.md`: Usage, contributor, and repo guidelines.
+
 ## Architecture
 - Workspace with crates:
   - `gh-otco-api`: reusable GitHub REST client (async, `reqwest` + `serde`).
@@ -19,7 +27,7 @@
 - Global flags: `--output`, `--fields`, `--sort`, `--limit`, `--all`, `--log-level`.
 
 ## Output & Formatting
-- Formats: JSON, YAML, CSV, PSV, table. Array outputs normalized to rows with projection (`--fields`), sort (`--sort`), limit (`--limit`).
+- Formats: JSON, YAML, CSV, PSV, table. Array outputs normalized to rows with projection (`--fields`), sort (`--sort`), limit (`--limit`). Output can be written to files via `--output-file`.
 - Table: `comfy-table`; CSV/PSV: `csv` crate; serialization via `serde`.
 
 ## API Client
@@ -32,10 +40,23 @@
   - Security: dependabot `/dependabot/alerts`, code scanning `/code-scanning/alerts`, secret scanning `/secret-scanning/alerts`.
 - Pagination: `per_page`, `page`, with `--all` to page until empty; default page cap to prevent runaway.
 - Error handling: `thiserror` domain errors in API; `anyhow` at CLI boundary with context.
+- Headers: add `Accept: application/vnd.github+json`, `User-Agent: gh-otco-cli`, `X-GitHub-Api-Version: 2022-11-28`. HTTP client timeout: 30s.
+
+## Core Crates
+- `clap`: Command definitions, parsing, and help UX.
+- `reqwest` + `rustls`: HTTP client with TLS for REST calls.
+- `serde` (+ `serde_json`, `serde_yaml`): Serialization of inputs/outputs and models.
+- `tokio`: Async runtime for HTTP and I/O tasks.
+- `tracing`, `tracing-subscriber`: Structured logs and filters.
+- `tracing-opentelemetry`, `opentelemetry-otlp` (feature `otel`): Export traces to OTLP.
+- `keyring`: OS-native secure storage for tokens.
+- `csv`, `comfy-table`: Delimited and tabular output formatting.
+- `anyhow`, `thiserror`: Error ergonomics and domain errors.
 
 ## Observability
 - Logging: `tracing` + `tracing-subscriber` with env filter; no timestamps by default.
 - OpenTelemetry: optional feature `otel` enabling OTLP exporter via `OTEL_EXPORTER_OTLP_ENDPOINT`.
+- Shutdown: tracer provider is flushed on exit (when feature enabled).
 
 ## Cross-Platform Considerations
 - Paths: `home`/`dirs` for config discovery; no Unix-specific syscalls.
@@ -50,4 +71,3 @@
 - Rate limits: add backoff on 403/429 using headers; provide `--all` with caution.
 - Schema drift: prefer typed models for stable surfaces; default to `serde_json::Value` for pass-throughs.
 - Permissions: document scopes per command; degrade with clear errors when insufficient.
-
