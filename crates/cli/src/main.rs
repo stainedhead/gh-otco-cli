@@ -6,7 +6,7 @@ use home::home_dir;
 use keyring::Entry;
 use serde::{Deserialize, Serialize};
 use std::{collections::BTreeMap, fs, path::PathBuf};
-use tracing::{info, warn};
+use tracing::warn;
 use tracing_subscriber::{fmt, EnvFilter};
 #[cfg(feature = "otel")]
 use tracing_subscriber::Registry;
@@ -671,6 +671,7 @@ async fn main() -> Result<()> {
     Ok(())
 }
 
+#[allow(dead_code)]
 fn output_one(map: &BTreeMap<&str, String>, fmt: OutputFormat) -> Result<()> {
     match fmt {
         OutputFormat::Json => {
@@ -869,7 +870,7 @@ fn set_config_key(cfg: &mut FileConfig, key: &str, value: &str) -> Result<()> {
 }
 
 fn generate_markdown_from_clap() -> String {
-    let mut cmd = Cli::command();
+    let cmd = Cli::command();
     // Ensure derived help strings are built
     let mut out = String::new();
     out.push_str("# Command Reference\n\n");

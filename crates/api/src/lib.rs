@@ -84,7 +84,7 @@ impl GitHubClient {
     async fn get_all_pages_array(
         &self,
         path: &str,
-        mut params: Vec<(&str, String)>,
+        params: Vec<(&str, String)>,
         per_page: u32,
         max_pages: Option<u32>,
     ) -> Result<Vec<serde_json::Value>, ApiError> {
