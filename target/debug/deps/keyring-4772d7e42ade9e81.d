@@ -1,0 +1,11 @@
+/Users/iggybdda/Code/stainedhead/Rust/gh-otco-cli/target/debug/deps/libkeyring-4772d7e42ade9e81.rmeta: /Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/keyring-2.3.3/src/lib.rs /Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/keyring-2.3.3/src/mock.rs /Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/keyring-2.3.3/src/macos.rs /Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/keyring-2.3.3/src/credential.rs /Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/keyring-2.3.3/src/error.rs
+
+/Users/iggybdda/Code/stainedhead/Rust/gh-otco-cli/target/debug/deps/libkeyring-4772d7e42ade9e81.rlib: /Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/keyring-2.3.3/src/lib.rs /Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/keyring-2.3.3/src/mock.rs /Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/keyring-2.3.3/src/macos.rs /Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/keyring-2.3.3/src/credential.rs /Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/keyring-2.3.3/src/error.rs
+
+/Users/iggybdda/Code/stainedhead/Rust/gh-otco-cli/target/debug/deps/keyring-4772d7e42ade9e81.d: /Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/keyring-2.3.3/src/lib.rs /Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/keyring-2.3.3/src/mock.rs /Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/keyring-2.3.3/src/macos.rs /Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/keyring-2.3.3/src/credential.rs /Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/keyring-2.3.3/src/error.rs
+
+/Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/keyring-2.3.3/src/lib.rs:
+/Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/keyring-2.3.3/src/mock.rs:
+/Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/keyring-2.3.3/src/macos.rs:
+/Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/keyring-2.3.3/src/credential.rs:
+/Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/keyring-2.3.3/src/error.rs:

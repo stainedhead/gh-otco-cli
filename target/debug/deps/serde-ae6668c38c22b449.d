@@ -1,0 +1,14 @@
+/Users/iggybdda/Code/stainedhead/Rust/gh-otco-cli/target/debug/deps/libserde-ae6668c38c22b449.rmeta: /Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.226/src/lib.rs /Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.226/src/integer128.rs /Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.226/src/private/mod.rs /Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.226/src/private/de.rs /Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.226/src/private/ser.rs /Users/iggybdda/Code/stainedhead/Rust/gh-otco-cli/target/debug/build/serde-a117488ac6b3c545/out/private.rs
+
+/Users/iggybdda/Code/stainedhead/Rust/gh-otco-cli/target/debug/deps/libserde-ae6668c38c22b449.rlib: /Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.226/src/lib.rs /Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.226/src/integer128.rs /Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.226/src/private/mod.rs /Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.226/src/private/de.rs /Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.226/src/private/ser.rs /Users/iggybdda/Code/stainedhead/Rust/gh-otco-cli/target/debug/build/serde-a117488ac6b3c545/out/private.rs
+
+/Users/iggybdda/Code/stainedhead/Rust/gh-otco-cli/target/debug/deps/serde-ae6668c38c22b449.d: /Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.226/src/lib.rs /Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.226/src/integer128.rs /Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.226/src/private/mod.rs /Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.226/src/private/de.rs /Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.226/src/private/ser.rs /Users/iggybdda/Code/stainedhead/Rust/gh-otco-cli/target/debug/build/serde-a117488ac6b3c545/out/private.rs
+
+/Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.226/src/lib.rs:
+/Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.226/src/integer128.rs:
+/Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.226/src/private/mod.rs:
+/Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.226/src/private/de.rs:
+/Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.226/src/private/ser.rs:
+/Users/iggybdda/Code/stainedhead/Rust/gh-otco-cli/target/debug/build/serde-a117488ac6b3c545/out/private.rs:
+
+# env-dep:OUT_DIR=/Users/iggybdda/Code/stainedhead/Rust/gh-otco-cli/target/debug/build/serde-a117488ac6b3c545/out

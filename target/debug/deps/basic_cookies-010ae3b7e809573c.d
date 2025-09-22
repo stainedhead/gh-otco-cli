@@ -1,0 +1,13 @@
+/Users/iggybdda/Code/stainedhead/Rust/gh-otco-cli/target/debug/deps/libbasic_cookies-010ae3b7e809573c.rmeta: /Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/basic-cookies-0.1.5/src/lib.rs /Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/basic-cookies-0.1.5/src/cookie.rs /Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/basic-cookies-0.1.5/src/cookie_lexer.rs /Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/basic-cookies-0.1.5/src/linked_list.rs /Users/iggybdda/Code/stainedhead/Rust/gh-otco-cli/target/debug/build/basic-cookies-929c458b885c2737/out/cookie_grammar.rs
+
+/Users/iggybdda/Code/stainedhead/Rust/gh-otco-cli/target/debug/deps/libbasic_cookies-010ae3b7e809573c.rlib: /Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/basic-cookies-0.1.5/src/lib.rs /Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/basic-cookies-0.1.5/src/cookie.rs /Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/basic-cookies-0.1.5/src/cookie_lexer.rs /Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/basic-cookies-0.1.5/src/linked_list.rs /Users/iggybdda/Code/stainedhead/Rust/gh-otco-cli/target/debug/build/basic-cookies-929c458b885c2737/out/cookie_grammar.rs
+
+/Users/iggybdda/Code/stainedhead/Rust/gh-otco-cli/target/debug/deps/basic_cookies-010ae3b7e809573c.d: /Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/basic-cookies-0.1.5/src/lib.rs /Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/basic-cookies-0.1.5/src/cookie.rs /Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/basic-cookies-0.1.5/src/cookie_lexer.rs /Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/basic-cookies-0.1.5/src/linked_list.rs /Users/iggybdda/Code/stainedhead/Rust/gh-otco-cli/target/debug/build/basic-cookies-929c458b885c2737/out/cookie_grammar.rs
+
+/Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/basic-cookies-0.1.5/src/lib.rs:
+/Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/basic-cookies-0.1.5/src/cookie.rs:
+/Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/basic-cookies-0.1.5/src/cookie_lexer.rs:
+/Users/iggybdda/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/basic-cookies-0.1.5/src/linked_list.rs:
+/Users/iggybdda/Code/stainedhead/Rust/gh-otco-cli/target/debug/build/basic-cookies-929c458b885c2737/out/cookie_grammar.rs:
+
+# env-dep:OUT_DIR=/Users/iggybdda/Code/stainedhead/Rust/gh-otco-cli/target/debug/build/basic-cookies-929c458b885c2737/out
